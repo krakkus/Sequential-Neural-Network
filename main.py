@@ -8,28 +8,30 @@ import network
 nrinner = 2048
 nrout = 128
 
-def runit(nw, data):
-    for i in range(0, len(data) - 1):
-        pass
-
 
 def main():
-    nw = network.CustomNetwork(layers=(128, 1000, 1000, 128),
-                               interconnects=100,
+    nw = network.CustomNetwork(layers=(2,25,25,25,25,2),
+                               interconnects=10,
                                activation=network.tanh)
 
-    with open('sample.txt', 'r') as file:
-        data = file.read()
+    # Number of iterations for training
+    num_iterations = 1000
+    inp = [0,1]
+    oup = [1,0]
 
-    while True:
-        d = [0] * 128
-        o = nw.forward(d)
-        err = nw.calculate_error(d)
-        nw.backpropagate(d)
-        print('.', end='')
-        pass
 
-        #runit(nw, data)
+    for _ in range(num_iterations):
+        # Forward pass
+        o = nw.forward(inp)
+
+        # Calculate error
+        err = nw.calculate_error(oup)
+        print(f'Error: {err}')
+
+        # Backpropagation
+        nw.backpropagate(oup)
+
+    print('Training completed.')
 
 
 if __name__ == '__main__':

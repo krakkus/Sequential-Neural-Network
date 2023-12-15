@@ -10,6 +10,12 @@ def tanh(x, derivative=False):
     else:
         return np.tanh(x)
 
+def relu(x, derivative=False):
+    if derivative:
+        return np.where(x > 0, 1, 0)
+    else:
+        return np.maximum(0, x)
+
 
 class CustomNetwork:
 
@@ -45,22 +51,23 @@ class CustomNetwork:
         pass
 
     def forward(self, input_data):
-        # Interconnects
-        for left_i, left_j, right_i, right_j in self.interconnects:
-            self.outputs[left_i][left_j] = self.outputs[right_i][right_j]
+        # # Interconnects
+        # for left_i, left_j, right_i, right_j in self.interconnects:
+        #     self.outputs[left_i][left_j] = self.outputs[right_i][right_j]
 
         # Calc
         self.outputs[0] = input_data
 
         for i in range(len(self.layers) - 1):
             self.outputs[i+1] = self.activation(np.dot(self.outputs[i], self.weights[i]))
+
         return self.outputs[-1]
 
     def calculate_error(self, target_output):
         # Mean Squared Error
         return np.mean((self.outputs[-1] - target_output) ** 2)
 
-    def backpropagate(self, target_output, learning_rate=0.1):
+    def backpropagate(self, target_output, learning_rate=0.01):
         # Calculate the error
         error = self.outputs[-1] - target_output
 
@@ -69,6 +76,7 @@ class CustomNetwork:
             delta = error * self.activation(self.outputs[i+1], derivative=True)
             error = np.dot(delta, self.weights[i].T)
             self.weights[i] -= learning_rate * np.dot(self.outputs[i+1].T, delta)
+            pass
 
 if __name__ == '__main__':
     print()
