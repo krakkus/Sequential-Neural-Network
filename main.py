@@ -10,26 +10,20 @@ nrout = 128
 
 
 def main():
-    nw = network.CustomNetwork(layers=(2,25,25,25,25,2),
+    nw = network.CustomNetwork(layers=(2, 10, 10, 1),
                                interconnects=10,
                                activation=network.tanh)
 
     # Number of iterations for training
     num_iterations = 1000
-    inp = [0,1]
-    oup = [1,0]
 
+    # AND
+    data = [[[1, 1], [1]],
+            [[1, 0], [0]],
+            [[0, 1], [0]],
+            [[0, 0], [0]]]
 
-    for _ in range(num_iterations):
-        # Forward pass
-        o = nw.forward(inp)
-
-        # Calculate error
-        err = nw.calculate_error(oup)
-        print(f'Error: {err}')
-
-        # Backpropagation
-        nw.backpropagate(oup)
+    nw.train(num_iterations, data)
 
     print('Training completed.')
 
