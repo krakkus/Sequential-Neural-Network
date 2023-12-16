@@ -58,7 +58,7 @@ class CustomNetwork:
         # Mean Squared Error
         return np.mean((self.outputs[-1] - target_output) ** 2)
 
-    def backpropagate(self, target_output, learning_rate=0.1):
+    def backpropagate(self, target_output, learning_rate=.25):
         # Calculate the error
         error = self.outputs[-1] - target_output
 
@@ -97,6 +97,24 @@ class CustomNetwork:
 
                 # Backpropagation
                 self.backpropagate(oup)
+
+
+    def train_one(self, data):
+        inp, oup = data
+
+        # Forward pass
+        o = self.forward(inp)
+
+        # Calculate error
+        err = self.calculate_error(oup)
+
+        # if i % 10 == 0:
+        #     print(inp, oup, o, err)
+
+        # Backpropagation
+        self.backpropagate(oup)
+
+        return o
 
 
 if __name__ == '__main__':
