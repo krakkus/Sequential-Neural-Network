@@ -19,9 +19,11 @@ def relu(x, derivative=False):
 
 class CustomNetwork:
 
-    def __init__(self, layers, interconnects, activation):
+    def __init__(self, layers, activation):
+        layers = list(layers)
+        layers[0] += 1
+
         self.layers = layers
-        self.interconnects = interconnects
         self.activation = activation
 
         # Initialize the weights for each layer
@@ -39,6 +41,9 @@ class CustomNetwork:
         pass
 
     def forward(self, input_data):
+        input_data = list(input_data)
+        input_data.append(1)
+
         # Calc
         self.outputs[0] = np.array(input_data)
 
@@ -58,26 +63,37 @@ class CustomNetwork:
         error = self.outputs[-1] - target_output
 
         # Backpropagate the error
-        for i in reversed(range(len(self.layers) - 1)):
+        for i in reversed(range(1, len(self.layers))):
             a = self.outputs[i].T
             b = self.activation(a, derivative=True)
             delta = error * b
+            error = np.dot(delta, self.weights[i])
 
-            error = np.dot(delta, self.weights[i + 1].T)
-            d = learning_rate * np.dot(delta.T, self.outputs[i].T)
-            self.weights[i + 1] -= d
+            _delta = np.expand_dims(delta, axis=-1)
+            _outputs = np.expand_dims(self.outputs[i-1], axis=-1)
+
+            d = learning_rate * np.dot(_delta, _outputs.T)
+            self.weights[i] -= d
             pass
 
     def train(self, num_iterations, data):
+        i = 0
+
         for _ in range(num_iterations):
-            print()
+            i += 1
+
+            if i % 10 == 0:
+                print()
+
             for inp, oup in data:
                 # Forward pass
                 o = self.forward(inp)
 
                 # Calculate error
                 err = self.calculate_error(oup)
-                print(inp, oup, o, err)
+
+                if i % 10 == 0:
+                    print(inp, oup, o, err)
 
                 # Backpropagation
                 self.backpropagate(oup)
