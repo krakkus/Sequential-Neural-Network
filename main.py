@@ -35,11 +35,23 @@ def generate_points_on_circle(n_points, radius=1):
 
     return points
 
+def generate_points_on_sinus(n_points, qwerty):
+    # Generate an array of x values evenly spaced from -1 to +1
+    x = np.linspace(-1, 1, n_points)
+
+    # Calculate the y coordinates of the points
+    y = np.sin(np.pi * x)
+
+    # Combine the x and y coordinates into a list of points
+    points = list(zip(x, y))
+
+    return points
+
 def main():
-    nw = network.CustomNetwork(layers=(6, 100, 2),
+    nw = network.CustomNetwork(layers=(3, 100, 1),
                                activation=network.tanh)
 
-    circle = generate_points_on_circle(100, 1)
+    circle = generate_points_on_sinus(100, 1)
     m = len(circle)
 
     i = 0
@@ -52,13 +64,13 @@ def main():
         idx_3 = (i + 2) % m
         idx_4 = (i + 3) % m
 
-        data_in = [circle[idx_1][0], circle[idx_1][1],
-                   circle[idx_2][0], circle[idx_2][1],
-                   circle[idx_3][0], circle[idx_3][1]]
-        data_out = [circle[idx_4][0], circle[idx_4][1]]
+        data_in = [circle[idx_1][1],
+                   circle[idx_2][1],
+                   circle[idx_3][1]]
+        data_out = [circle[idx_4][1]]
 
         o = nw.train_one((data_in, data_out))
-        buff.append(o)
+        buff.append((circle[idx_4][0],o))
         if len(buff) > 100:
             buff.pop(0)
 
