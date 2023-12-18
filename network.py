@@ -45,8 +45,11 @@ class CustomNetwork:
     def forward(self, input_data):
         input_data = list(input_data)
         input_data.append(1)
+
+        l = 0
+        n = 0
         for i in range(0, self.magic):
-            t = i % len(self.outputs[1])    # Wrap around if attempt to copy more than layer is big
+            t = n % len(self.outputs[l])    # Wrap around if attempt to copy more than layer is big
             input_data.append(self.outputs[1][t])
 
         # Calc
