@@ -55,7 +55,8 @@ def generate_points_on_sinus(n_points, qwerty):
 
 def main():
     nw = network.CustomNetwork(layers=(1, 64, 64, 64, 1),
-                               activation=network.tanh)
+                               activation=network.tanh,
+                               magic=10)
 
     circle = generate_points_on_sinus(100, 1)
     m = len(circle)

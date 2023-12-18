@@ -19,12 +19,14 @@ def relu(x, derivative=False):
 
 class CustomNetwork:
 
-    def __init__(self, layers, activation):
+    def __init__(self, layers, activation, magic):
         layers = list(layers)
         layers[0] += 1
+        layers[0] += magic
 
         self.layers = layers
         self.activation = activation
+        self.magic = magic
 
         # Initialize the weights for each layer
         self.weights = [[]]
@@ -43,6 +45,9 @@ class CustomNetwork:
     def forward(self, input_data):
         input_data = list(input_data)
         input_data.append(1)
+        for i in range(0, self.magic):
+            t = i % len(self.outputs[1])    # Wrap around if attempt to copy more than layer is big
+            input_data.append(self.outputs[1][t])
 
         # Calc
         self.outputs[0] = np.array(input_data)
