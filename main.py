@@ -54,7 +54,7 @@ def generate_points_on_sinus(n_points, qwerty):
     return points
 
 def main():
-    nw = network.CustomNetwork(layers=(3, 64, 64, 64, 1),
+    nw = network.CustomNetwork(layers=(1, 64, 64, 64, 1),
                                activation=network.tanh)
 
     circle = generate_points_on_sinus(100, 1)
@@ -72,13 +72,11 @@ def main():
         idx_3 = (i + 2) % m
         idx_4 = (i + 3) % m
 
-        data_in = [circle[idx_1][1],
-                   circle[idx_2][1],
-                   circle[idx_3][1]]
-        data_out = [circle[idx_4][1]]
+        data_in = [circle[idx_1][1]]
+        data_out = [circle[idx_2][1]]
 
         o = nw.train_one((data_in, data_out), learning_rate)
-        buff.append((circle[idx_4][0], o))
+        buff.append((circle[idx_2][0], o))
         if len(buff) > 100:
             buff.pop(0)
 
