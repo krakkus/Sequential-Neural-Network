@@ -6,20 +6,26 @@ import network
 # https://www.reddit.com/r/datasets/comments/3bxlg7/i_have_every_publicly_available_reddit_comment/
 
 
-def draw_points(points, margin=0.1):
-    # Create a blank 500x500 black image
+img = None
+
+def draw_clear():
+    global img
     img = np.zeros((500, 500, 3), dtype=np.uint8)
+
+def draw_points(points, clr, margin=0.1):
+    global img
+    # Create a blank 500x500 black image
+    if img is None:
+        img = np.zeros((500, 500, 3), dtype=np.uint8)
 
     # Convert points from range [-1-margin, 1+margin] to [0, 500]
     points = [(int(((x+1)*(1-margin)+margin)*250), int(((y+1)*(1-margin)+margin)*250)) for x, y in points]
 
     # Draw each point
     for x, y in points:
-        cv2.circle(img, (x, y), radius=5, color=(0, 255, 0), thickness=-1)
+        cv2.circle(img, (x, y), radius=5, color=clr, thickness=-1)
 
     # Display the image
-    cv2.imshow('Image', img)
-    cv2.waitKey(1)
     #cv2.destroyAllWindows()
 
 def generate_points_on_circle(n_points, radius=1):
@@ -81,7 +87,11 @@ def main():
 
         if i % 100 == 0:
             print(i, nw.calculate_error(data_out), learning_rate)
-            draw_points(buff)
+            draw_clear()
+            draw_points(circle, (255, 0, 0))
+            draw_points(buff, (0, 255, 0))
+            cv2.imshow('Image', img)
+            cv2.waitKey(1)
 
         if learning_rate < final_learning_rate:
             cv2.waitKey(0)
