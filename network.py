@@ -46,19 +46,24 @@ class CustomNetwork:
         input_data = list(input_data)
         input_data.append(1)
 
-        l = 0
-        n = 0
+        link_layer = 0
+        link_node = 0
         for i in range(0, self.magic):
-            t = n % len(self.outputs[l])    # Wrap around if attempt to copy more than layer is big
-            input_data.append(self.outputs[1][t])
+            link_node_clipped = link_node % len(self.outputs[link_layer])    # Wrap around if attempt to copy more than layer is big
+            input_data.append(self.outputs[link_layer][link_node_clipped])
+
+            link_layer += 1
+            if link_layer == len(self.outputs):  # Should the output layer be included?
+                link_layer = 1
+                link_node += 1
 
         # Calc
         self.outputs[0] = np.array(input_data)
 
         for i in range(1, len(self.layers)):
             k = np.dot(self.outputs[i-1], self.weights[i].T)
-            l = self.activation(k)
-            self.outputs[i] = l
+            link_layer = self.activation(k)
+            self.outputs[i] = link_layer
 
         return self.outputs[-1]
 

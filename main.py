@@ -54,16 +54,16 @@ def generate_points_on_sinus(n_points, qwerty):
     return points
 
 def main():
-    nw = network.CustomNetwork(layers=(1, 64, 64, 64, 1),
+    nw = network.CustomNetwork(layers=(1, 20, 20, 20, 1),
                                activation=network.tanh,
-                               magic=16)
+                               magic=10)
 
     circle = generate_points_on_sinus(100, 1)
     m = len(circle)
 
     i = 0
     buff = []
-    learning_rate = 0.1
+    learning_rate = 0.2
     final_learning_rate = 0.005
     while True:
         i += 1
