@@ -54,24 +54,23 @@ def generate_points_on_sinus(n_points, qwerty):
     return points
 
 def main():
-    nw = network.CustomNetwork(layers=(1, 20, 20, 20, 1),
+    nw = network.CustomNetwork(layers=(1, 10, 10, 10, 1),
                                activation=network.tanh,
-                               magic=10)
+                               magic=3)
 
     circle = generate_points_on_sinus(100, 1)
     m = len(circle)
 
     i = 0
+    o = [0]
     buff = []
     learning_rate = 0.2
-    final_learning_rate = 0.005
+    final_learning_rate = 0.0002
     while True:
         i += 1
 
         idx_1 = (i + 0) % m
         idx_2 = (i + 1) % m
-        idx_3 = (i + 2) % m
-        idx_4 = (i + 3) % m
 
         data_in = [circle[idx_1][1]]
         data_out = [circle[idx_2][1]]
@@ -84,7 +83,7 @@ def main():
         if i % 1000 == 0:
             learning_rate *= 0.995
 
-        if i % 100 == 0:
+        if i % 1000 == 0:
             print(i, nw.calculate_error(data_out), learning_rate)
             draw_clear()
             draw_points(circle, (255, 0, 0))
@@ -94,8 +93,28 @@ def main():
 
         if learning_rate < final_learning_rate:
             cv2.waitKey(0)
-            cv2.destroyAllWindows()
-            exit()
+            break
+
+    while True:
+        i += 1
+
+        idx_1 = (i + 0) % m
+        idx_2 = (i + 1) % m
+
+        data_in = o
+        o = nw.forward(data_in)
+
+        buff.append((circle[idx_2][0], o))
+        if len(buff) > 100:
+            buff.pop(0)
+
+        if i % 100 == 0:
+            print(i)
+            draw_clear()
+            draw_points(buff, (0, 255, 0))
+            cv2.imshow('Image', img)
+            cv2.waitKey(0)
+
 
 if __name__ == '__main__':
     main()
